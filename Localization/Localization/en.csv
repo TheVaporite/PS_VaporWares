@@ -1,0 +1,6 @@
+# English Text
+scenario_tailor_title,Tailor
+scenario_tailor_body,"You open a new shop as a tailor with just a few bolts of fabric and your autotailor machine."
+scenario_tailor_gear1,"AutoTailor, AutoLoom, and six Kotton."
+type_clothing,Clothing
+type_fabric,Fabric

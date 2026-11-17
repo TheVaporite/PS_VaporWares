@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Manifest>
+  <ID>vapor_wares</ID>
+  <Name>Vapor Wares</Name>
+  <Author>Samuel "The Vaporite" Murray</Author>
+  <ModVersion>1.0</ModVersion>
+  <Description>Adds fabric and clothing gameplay. Kotton and Zilk, for daily and luxurious fashion.</Description>
+	<GameVersions>
+		<Version>1.0.0</Version>
+	</GameVersions>
+  <Prerequisites />
+  <!-- Every DLL the game must load, relative to this folder. Nothing else in the folder is loaded. -->
+  <Assemblies>
+    <Assembly>VaporWares.dll</Assembly>
+  </Assemblies>
+  <!-- What your code does beyond the game's API: files, network, process, dynamic-code, native, reflection-external.
+       Most mods need none. The game scans your DLL when a player activates the mod; an undeclared capability
+       refuses the activation. Check with the console command: mod-scan vapor_wares   (see ModdingGuide.md) -->
+  <Capabilities />
+</Manifest>
