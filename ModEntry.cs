@@ -30,16 +30,25 @@ namespace VaporWares
             // Init Items into the modded item directory
             ModHook.OnModItemDirectoryInit += (ModItemDirectory modItemDirectory) =>
             {
-                modItemDirectory.Add("kotton_bolt", Items.CreateKottonBolt);
-                modItemDirectory.Add("zilk_bolt", Items.CreateZilkBolt);
-                modItemDirectory.Add("zilk_fabric", Items.CreateZilkFabric);
-                modItemDirectory.Add("zilk_fiber", Items.CreateZilkFiber);
-                modItemDirectory.Add("tshirt", Items.CreateTShirt);
-                modItemDirectory.Add("sleeveless_shirt", Items.CreateSleevelessShirt);
-                modItemDirectory.Add("autoloom", AutoLoom.CreateAutoLoom);
-                modItemDirectory.Add("autoloom_note", AutoLoom.CreateNote);
-                modItemDirectory.Add("autotailor", AutoTailor.CreateAutoTailor);
-                modItemDirectory.Add("autotailor_note", AutoTailor.CreateNote);
+                modItemDirectory.Add("vaporwares_kotton_bolt", Items.CreateKottonBolt);
+                modItemDirectory.Add("vaporwares_zilk_fiber", Items.CreateZilkFiber);
+                modItemDirectory.Add("vaporwares_zilk_fabric", Items.CreateZilkFabric);
+                modItemDirectory.Add("vaporwares_zilk_bolt", Items.CreateZilkBolt);
+                modItemDirectory.Add("vaporwares_clothing_tshirt", Items.CreateTShirt);
+                modItemDirectory.Add("vaporwares_clothing_sleeveless_shirt", Items.CreateSleevelessShirt);
+                modItemDirectory.Add("vaporwares_clothing_beanie", Items.CreateBeanie);
+                modItemDirectory.Add("vaporwares_clothing_zilk_scarf", Items.CreateZilkScarf);
+                modItemDirectory.Add("vaporwares_clothing_zilk_tshirt", Items.CreateZilkTShirt);
+                modItemDirectory.Add("vaporwares_autoloom", AutoLoom.CreateAutoLoom);
+                modItemDirectory.Add("vaporwares_autoloom_note", AutoLoom.CreateNote);
+                modItemDirectory.Add("vaporwares_autotailor", AutoTailor.CreateAutoTailor);
+                modItemDirectory.Add("vaporwares_autotailor_note", AutoTailor.CreateNote);
+                modItemDirectory.Add("vaporwares_chip_tshirt", Items.CreateTailorChipTShirt);
+                modItemDirectory.Add("vaporwares_chip_mass_tshirt", Items.CreateTailorChipMassTShirt);
+                modItemDirectory.Add("vaporwares_chip_sleeveless", Items.CreateTailorChipSleevelessShirt);
+                modItemDirectory.Add("vaporwares_chip_beanie", Items.CreateTailorChipBeanie);
+                modItemDirectory.Add("vaporwares_chip_zilk_tshirt", Items.CreateTailorChipZilkTShirt);
+                modItemDirectory.Add("vaporwares_chip_zilk_scarf", Items.CreateTailorChipZilkScarf);
             };
 
             //Debugging hook
@@ -52,15 +61,13 @@ namespace VaporWares
             ModHook.OnPlaceInventorInventoryItemLate += (List<GameItem> items) =>
             {
                 // 50% chance dr. jackson will have the purple blood synthesizer in stock
-                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("kotton_fabric"));
-                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("kotton_fabric"));
-                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("kotton_fabric"));
-                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("kotton_fabric"));
-                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("zilk_raw"));
-                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("zilk_raw"));
-                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("tshirt"));
-                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("autoloom"));
-                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("autotailor"));
+                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("vaporwares_chip_tshirt"));
+                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("vaporwares_chip_sleeveless"));
+                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("vaporwares_chip_beanie"));
+                if (RNG.Roll(25)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("vaporwares_chip_zilk_tshirt"));
+                if (RNG.Roll(25)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("vaporwares_chip_zilk_scarf"));
+                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("vaporwares_autoloom"));
+                if (RNG.Roll(50)) PlayerStore.Instance.AddDirectSellingItemToTable(DirectoryMaster.Item("vaporwares_autotailor"));
             };
         }
 
@@ -106,6 +113,7 @@ namespace VaporWares
             onStart: () =>
             {
                 ModHelper.MoveItemToInventory(ModHelper.SpawnItem("energy_credit"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("energy_credit"));
                 ModHelper.MoveItemToInventory(ModHelper.SpawnItem("kotton_fiber"));
                 ModHelper.MoveItemToInventory(ModHelper.SpawnItem("kotton_fiber"));
                 ModHelper.MoveItemToInventory(ModHelper.SpawnItem("kotton_fiber"));
@@ -114,33 +122,35 @@ namespace VaporWares
                 ModHelper.MoveItemToInventory(ModHelper.SpawnItem("kotton_fiber"));
                 ModHelper.MoveItemToInventory(ModHelper.SpawnItem("kotton_fiber"));
                 ModHelper.MoveItemToInventory(ModHelper.SpawnItem("kotton_fiber"));
-                ModHelper.MoveItemToInventory(ItemFeatureHelper.SetShabby(ModHelper.SpawnItem("autotailor")));
-                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("autotailor_note"));
-                ModHelper.MoveItemToInventory(ItemFeatureHelper.SetShabby(ModHelper.SpawnItem("autoloom")));
-                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("autoloom_note"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_kotton_bolt"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_zilk_fiber"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_zilk_fabric"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_zilk_bolt"));
+                ModHelper.MoveItemToInventory(ItemFeatureHelper.SetShabby(ModHelper.SpawnItem("vaporwares_autotailor")));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_autotailor_note"));
+                ModHelper.MoveItemToInventory(ItemFeatureHelper.SetShabby(ModHelper.SpawnItem("vaporwares_autoloom")));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_autoloom_note"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_chip_tshirt"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_chip_sleeveless"));
                 ModHelper.AddCredit(-100, false);
             },
-            iconKey: "scenario_tailor",          // a sprite from your Textures/Items
+            iconKey: "vapor_wares:scenario_tailor",          // a sprite from your Textures/Items
             tag: () => "Advanced start",                // optional short line next to the name
             skipIntro: true,
             tagTone: StartingScenario.TagTone.Warning); // Positive (green), Warning (orange), Danger (red)
-
-            #region LootTables
-            ModHelper.AddLootEntry("vapor_ware", "dumpingGroundTG", "kotton_fabric", 10);
-            ModHelper.AddLootEntry("vapor_ware", "dumpingGroundTG", "zilk_fabric", 1);
-            ModHelper.AddLootEntry("vapor_ware", "dumpingGroundTG", "zilk_raw", 5);
-            #endregion
 
             #region Debug Functionality
             ModHelper.AddDebugFunction("vapor_wares", ModHelper.DEBUG_CATEGORY_SPAWN, "Spawn My Items", () =>
             {
                 ModHelper.MoveItemToInventory(ModHelper.SpawnItem("kotton_fabric"));
-                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("zilk_fabric"));
-                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("zilk_raw"));
-                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("tshirt"));
-                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("sleeveless_shirt"));
-                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("autoloom"));
-                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("autotailor"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_kotton_bolt"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_zilk_fiber"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_zilk_fabric"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_zilk_bolt"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_clothing_tshirt"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_clothing_sleeveless_shirt"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_autoloom"));
+                ModHelper.MoveItemToInventory(ModHelper.SpawnItem("vaporwares_autotailor"));
             });
 
             // tall: true gives the button twice the normal height, for the one you press most.

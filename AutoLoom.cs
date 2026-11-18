@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 namespace VaporWares
 {
     public class AutoLoom
     {
         public const string AUTOLOOM_TAG = "AUTOLOOM_TAG";
-        public const int BASE_POWER_USAGE = 4;
-        public const int BASE_PROCESSING_SPEED = 10;
-        public const int TARGET_PROGRESS = 20; // 2 cycles (days) at base speed of 10
+        public const int BASE_POWER_USAGE = 6;
+        public const int BASE_PROCESSING_SPEED = 20;
         public static GameItem CreateAutoLoom()
         {
             (PixelWindow itemWindow, GameSlotInventory batterySlot, GameGridInventory moduleGrid, GameGridInventory inputGrid, GameGridInventory outputGrid, GameSlotInventory noteSlot) = CreateMachineInventoryWindow();
@@ -22,9 +22,11 @@ namespace VaporWares
 
             outputGrid.mayInventoryAddItemFunc = (item, _) => item.identifier.Equals("kotton_fabric") || item.identifier.Equals("zilk_fabric");
 
-            noteSlot.mayInventoryAddItemFunc = (item, _) => item.identifier.Equals("postit");
+            //noteSlot.mayInventoryAddItemFunc = (item, _) => item.identifier.Equals("postit");
             noteSlot.SetBackgroundFadeSprite("Items/items_tool", "postit");
-            
+            noteSlot.TryAcceptAll(CreateNote());
+            noteSlot.LockInv();
+
 
             GameItem machine = ItemDirectory.CreateEmptyItem()
                 .SetContentWindow(itemWindow)
@@ -35,7 +37,7 @@ namespace VaporWares
             machine.shortDescription = "A machine that turns Kotton and Zilk into Fabric and Bolts.";
             machine.flavorText = "";
 
-            machine.unitValue = 500;
+            machine.unitValue = 300;
 
             machine.SetGameItemType(TypeHelper.MACHINE);
             machine.EnableTag(ContainerHelper.CONTAINER_TAG);
@@ -80,50 +82,77 @@ namespace VaporWares
                 int energyUsage = MachineryHelper.GetMachinePowerUsage(item);
                 if (MachineHelper.CanPower(item, batterySlot) == false) return;
 
-                GameItem outputTester = DirectoryMaster.Item("tshirt");
+                GameItem outputTester = DirectoryMaster.Item("kotton_fabric");
                 bool outputHasRoom = GraphUtils.CanAccept(outputGrid, outputTester);
                 outputTester.Destroy();
                 if (outputHasRoom == false) return;
 
-                //GameItem basicMat = GraphUtils.FindChildType<GameItem>(inputGrid, c => c.identifier.Equals("kotton_fiber") || c.identifier.Equals("zilk_fabric"));
-                List<GameItem> basicMats = GraphUtils.FindChildrenType<GameItem>(inputGrid, c => c.identifier.Equals("zilk_fiber"));
-                if (basicMats == null || basicMats.Count < 3)
+                string ResourceConsumed = "kotton_fiber";
+                int ResourceCount = 3;
+                string ProductionItem = "kotton_fabric";
+                int ProductionCount = 4;
+                int TargetProgress = 40;
+                //Determine which process to work, go most valuable first.
+                if(inputGrid.childItems.FindAll(x => x.identifier.Contains("vaporwares_zilk_fabric")).Count >= 2)
                 {
-                    basicMats = GraphUtils.FindChildrenType<GameItem>(inputGrid, c => c.identifier.Equals("zilk_fabric"));
+                    ResourceConsumed = "vaporwares_zilk_fabric";
+                    ResourceCount = 3;
+                    ProductionItem = "vaporwares_zilk_bolt";
+                    ProductionCount = 1;
+                    TargetProgress = 45;
+                }
+                else if (inputGrid.childItems.FindAll(x => x.identifier.Contains("vaporwares_zilk_fiber")).Count >= 3)
+                {
+                    ResourceConsumed = "vaporwares_zilk_fiber";
+                    ResourceCount = 3;
+                    ProductionItem = "vaporwares_zilk_fabric";
+                    ProductionCount = 2;
+                    TargetProgress = 60;
+                }
+                else if (inputGrid.childItems.FindAll(x => x.identifier.Contains("kotton_fabric")).Count >= 2)
+                {
+                    ResourceConsumed = "kotton_fabric";
+                    ResourceCount = 3;
+                    ProductionItem = "vaporwares_kotton_bolt";
+                    ProductionCount = 1;
+                    TargetProgress = 30;
+                }
 
-                    if (basicMats == null || basicMats.Count < 2)
+
+                List<GameItem> Materials = new List<GameItem>();
+                foreach (var child in inputGrid.childItems)
+                {
+                    if (child.identifier.Equals(ResourceConsumed))
                     {
-                        basicMats = GraphUtils.FindChildrenType<GameItem>(inputGrid, c => c.identifier.Equals("kotton_fabric"));
-
-                        if (basicMats == null || basicMats.Count < 2)
+                        Materials.Add(child);
+                        if (Materials.Count >= ResourceCount)
                         {
-                            basicMats = GraphUtils.FindChildrenType<GameItem>(inputGrid, c => c.identifier.Equals("kotton_fiber"));
-                            if(basicMats == null || basicMats.Count < 2)
-                            {
-                                basicMats = null;
-                            }
+                            break;
                         }
                     }
                 }
+
 
                 string state = MachineProgressHelper.GetMachineState(item);
 
                 if (state.Equals(MachineProgressHelper.STATE_READY))
                 {
-                    if (basicMats == null) return;
+                    if (Materials == null || Materials.Count < ResourceCount) return;
 
                     PowerHelper.DrawPowerSource(batterySlot.childItem, energyUsage);
 
                     item.ModifyTag(MachineProgressHelper.MACHINE_STATE_TAG, s => s.Enable().SetString(MachineProgressHelper.STATE_WORKING));
                     item.ModifyTag(MachineProgressHelper.MACHINE_PROGRESS_CURRENT_TAG, s => s.Enable().SetInt(0));
-                    item.ModifyTag(MachineProgressHelper.MACHINE_PROGRESS_TARGET_TAG, s => s.Enable().SetInt(TARGET_PROGRESS));
+                    item.ModifyTag(MachineProgressHelper.MACHINE_PROGRESS_TARGET_TAG, s => s.Enable().SetInt(TargetProgress));
+                    item.SetSpriteAndShape("Items/items_tool2", "printer_on");
 
                     MachineProgressHelper.ContinueProgressTypeMachine(item);
                     MachineHelper.OnMachineActioned(machine, moduleGrid);
 
                     if (MachineProgressHelper.IsProgressTypeMachineFinished(item))
                     {
-                        FinishSynthesis(item, basicMats, outputGrid);
+                        FinishSynthesis(item, Materials, outputGrid, ProductionItem, ProductionCount);
+                        item.SetSpriteAndShape("Items/items_tool2", "printer_off");
                     }
                 }
                 else if (state.Equals(MachineProgressHelper.STATE_WORKING))
@@ -135,12 +164,13 @@ namespace VaporWares
 
                     if (MachineProgressHelper.IsProgressTypeMachineFinished(item))
                     {
-                        if (basicMats == null)
+                        item.SetSpriteAndShape("Items/items_tool2", "printer_off");
+                        if (Materials == null || Materials.Count < ResourceCount)
                         {
                             MachineProgressHelper.FinishProgressTypeMachine(item);
                             return;
                         }
-                        FinishSynthesis(item, basicMats, outputGrid);
+                        FinishSynthesis(item, Materials, outputGrid, ProductionItem, ProductionCount);
                     }
                 }
             };
@@ -148,32 +178,16 @@ namespace VaporWares
             return machine;
         }
 
-        public static void FinishSynthesis(GameItem machine, List<GameItem> basicMats, GameGridInventory outputGrid)
+        public static void FinishSynthesis(GameItem machine, List<GameItem> materials, GameGridInventory outputGrid, string ProductionItem, int ProductionCount)
         {
             MachineProgressHelper.FinishProgressTypeMachine(machine);
-            bool kotton = basicMats[0].identifier.Equals("kotton_fiber");
-            bool kottonfab = basicMats[0].identifier.Equals("kotton_fabric");
-            bool zilk = basicMats[0].identifier.Equals("zilk_fiber");
-            bool zilkfab = basicMats[0].identifier.Equals("zilk_fabric");
-            if (kotton)
+            foreach (var mat in materials)
             {
-                GraphUtils.TryDestroyAll(basicMats, 2);
-                GraphUtils.TryAcceptAll(outputGrid, DirectoryMaster.Item("kotton_fabric"));
+                mat.Destroy();
             }
-            else if (kottonfab)
+            for (int i = 0; i < ProductionCount; i++)
             {
-                GraphUtils.TryDestroyAll(basicMats, 2);
-                GraphUtils.TryAcceptAll(outputGrid, DirectoryMaster.Item("kotton_bolt"));
-            }
-            else if (zilk)
-            {
-                GraphUtils.TryDestroyAll(basicMats, 3);
-                GraphUtils.TryAcceptAll(outputGrid, DirectoryMaster.Item("zilk_fabric"));
-            }
-            else if (zilkfab)
-            {
-                GraphUtils.TryDestroyAll(basicMats, 2);
-                GraphUtils.TryAcceptAll(outputGrid, DirectoryMaster.Item("zilk_bolt"));
+                GraphUtils.TryAcceptAll(outputGrid, DirectoryMaster.Item(ProductionItem));
             }
         }
 
@@ -184,14 +198,15 @@ namespace VaporWares
 
             GameSlotInventory batterySlot = new GameSlotInventory();
             GameGridInventory moduleGrid = new GameGridInventory(MachineHelper.DEFAULT_MODULE_BAY_CONFIG, MachineHelper.DEFAULT_MODULE_BAY_WIDTH);
-            GameGridInventory inputGrid = new GameGridInventory(6, 4);
-            GameGridInventory outputGrid = new GameGridInventory(6, 3);
+            GameGridInventory inputGrid = new GameGridInventory(3, 6);
+            GameGridInventory outputGrid = new GameGridInventory(6, 4);
             GameSlotInventory noteSlot = new GameSlotInventory();
+
 
             TagElement batteryLabel = new TagElement().SetText("Battery");
             TagElement moduleLabel = new TagElement().SetText("Modules");
             TagElement inputLabel = new TagElement().SetText("Material");
-            TagElement outputLabel = new TagElement().SetText("Fabric Output");
+            TagElement outputLabel = new TagElement().SetText("Output");
             TagElement noteLabel = new TagElement().SetText("Note");
 
             mainGrid.Attach(batteryLabel, 0, 0, minimumHeight: 20, minimumWidth: 20);
@@ -202,8 +217,8 @@ namespace VaporWares
 
             mainGrid.Attach(batterySlot, 0, 1, minimumHeight: 50, minimumWidth: 20);
             mainGrid.Attach(moduleGrid, 1, 1, minimumHeight: 50, minimumWidth: 20);
-            mainGrid.Attach(inputGrid, 2, 1, minimumHeight: 50, minimumWidth: minWidth);
-            mainGrid.Attach(outputGrid, 3, 1, minimumHeight: 100, minimumWidth: 5);
+            mainGrid.Attach(inputGrid, 2, 1, minimumHeight: 50, minimumWidth: 100);
+            mainGrid.Attach(outputGrid, 3, 1, minimumHeight: 100, minimumWidth: 100);
             mainGrid.Attach(noteSlot, 4, 1, minimumHeight: 5, minimumWidth: 5);
 
             window.Attach(mainGrid);

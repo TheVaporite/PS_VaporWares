@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -9,12 +10,12 @@ namespace VaporWares
     {
         public const string AUTO_TAILOR_TAG = "AUTO_TAILOR_TAG";
         public const int BASE_POWER_USAGE = 10;
-        public const int BASE_PROCESSING_SPEED = 100;
-        public const int TARGET_PROGRESS = 300; // 3 cycles (days) at base speed of 100
+        public const int BASE_PROCESSING_SPEED = 20;
+        public const int TARGET_PROGRESS = 50; // 2 cycles (days) at base speed of 100
 
         public static GameItem CreateAutoTailor()
         {
-            (PixelWindow itemWindow, GameSlotInventory batterySlot, GameGridInventory moduleGrid, GameGridInventory inputGrid, GameGridInventory outputGrid, GameSlotInventory noteSlot) = CreateMachineInventoryWindow();
+            (PixelWindow itemWindow, GameSlotInventory batterySlot, GameGridInventory moduleGrid, GameGridInventory inputGrid, GameSlotInventory chipSlot, GameGridInventory outputGrid, GameSlotInventory noteSlot) = CreateMachineInventoryWindow();
 
             inputGrid.mayInventoryAddItemFunc = (item, _) =>
             {
@@ -22,10 +23,15 @@ namespace VaporWares
                 return item.IsGameItemType("FABRIC") || item.IsGameItemType(TypeHelper.MATERIAL);
             };
 
-            outputGrid.mayInventoryAddItemFunc = (item, _) => item.identifier.Equals("tshirt") || item.identifier.Equals("sleeveless_shirt");
+            outputGrid.mayInventoryAddItemFunc = (item, _) => item.identifier.Contains("vaporwares_clothing_");
 
-            noteSlot.mayInventoryAddItemFunc = (item, _) => item.identifier.Equals("postit");
+            //noteSlot.mayInventoryAddItemFunc = (item, _) => item.identifier.Equals("postit");
             noteSlot.SetBackgroundFadeSprite("Items/items_tool", "postit");
+            noteSlot.TryAcceptAll(CreateNote());
+            noteSlot.LockInv();
+
+            chipSlot.mayInventoryAddItemFunc = (GameItem item, GameInventory _) => GeneralHelper.IsItemOwned(item) && item.identifier.Contains("vaporwares_chip_");
+            chipSlot.SetBackgroundFadeSprite("vapor_wares", "tailor_chip_basic");
 
             GameItem machine = ItemDirectory.CreateEmptyItem()
                 .SetContentWindow(itemWindow)
@@ -33,10 +39,10 @@ namespace VaporWares
 
 
             machine.name = "Auto Tailor";
-            machine.shortDescription = "A machine that turns fabric and other material into clothing.";
+            machine.shortDescription = "A machine that turns fabric into clothing.";
             machine.flavorText = "";
 
-            machine.unitValue = 500;
+            machine.unitValue = 400;
 
             machine.SetGameItemType(TypeHelper.MACHINE);
             machine.EnableTag(ContainerHelper.CONTAINER_TAG);
@@ -81,35 +87,121 @@ namespace VaporWares
                 int energyUsage = MachineryHelper.GetMachinePowerUsage(item);
                 if (MachineHelper.CanPower(item, batterySlot) == false) return;
 
-                GameItem outputTester = DirectoryMaster.Item("tshirt");
+                var Slotted = chipSlot.childItem.identifier;
+                string ResourceConsumed;
+                int ResourceCount;
+                string ProductionItem;
+                int ProductionCount;
+                int TargetProgress = 0;
+                switch(Slotted)
+                {
+                    //If this can be moved to the chips, that'd be prefered.
+                    case "vaporwares_chip_tshirt":
+                        {
+                            ResourceConsumed = "kotton_fabric";
+                            ResourceCount = 3;
+                            ProductionItem = "vaporwares_clothing_tshirt";
+                            ProductionCount = 4;
+                            TargetProgress = 45;
+                            break;
+                        }
+                    //If this can be moved to the chips, that'd be prefered.
+                    case "vaporwares_chip_mass_tshirt":
+                        {
+                            ResourceConsumed = "vaporwares_kotton_bolt";
+                            ResourceCount = 1;
+                            ProductionItem = "vaporwares_clothing_tshirt";
+                            ProductionCount = 6;
+                            TargetProgress = 55;
+                            break;
+                        }
+                    case "vaporwares_chip_sleeveless":
+                        {
+                            ResourceConsumed = "kotton_fabric";
+                            ResourceCount = 3;
+                            ProductionItem = "vaporwares_clothing_sleeveless_shirt";
+                            ProductionCount = 5;
+                            TargetProgress = 35;
+                            break;
+                        }
+                    case "vaporwares_chip_beanie":
+                        {
+                            ResourceConsumed = "kotton_fabric";
+                            ResourceCount = 1;
+                            ProductionItem = "vaporwares_clothing_beanie";
+                            ProductionCount = 2;
+                            TargetProgress = 18;
+                            break;
+                        }
+                    case "vaporwares_chip_zilk_tshirt":
+                        {
+                            ResourceConsumed = "vaporwares_zilk_fabric";
+                            ResourceCount = 1;
+                            ProductionItem = "vaporwares_clothing_zilk_tshirt";
+                            ProductionCount = 1;
+                            TargetProgress = 40;
+                            break;
+                        }
+                    case "vaporwares_chip_zilk_scarf":
+                        {
+                            ResourceConsumed = "vaporwares_zilk_fabric";
+                            ResourceCount = 1;
+                            ProductionItem = "vaporwares_clothing_zilk_scarf";
+                            ProductionCount = 1;
+                            TargetProgress = 24;
+                            break;
+                        }
+                    default:
+                        {
+                            //No chip, no production.
+                            return;
+                        }
+                }
+
+                GameItem outputTester = DirectoryMaster.Item(ProductionItem);
                 bool outputHasRoom = GraphUtils.CanAccept(outputGrid, outputTester);
                 outputTester.Destroy();
                 if (outputHasRoom == false) return;
 
-                List<GameItem> fabric = GraphUtils.FindChildrenType<GameItem>(inputGrid, c => c.identifier.Equals("kotton_bolt"));
-                if (fabric == null)
+                //GameItem fabric = GraphUtils.FindChildType<GameItem>(inputGrid, c => c.identifier.Equals(ResourceConsumed));
+                List<GameItem> Materials = new List<GameItem>();
+                foreach(var child in inputGrid.childItems)
                 {
-                    fabric = GraphUtils.FindChildrenType<GameItem>(inputGrid, c => c.identifier.Equals("kotton_fabric"));
+                    if(child.identifier.Equals(ResourceConsumed))
+                    {
+                        Materials.Add(child);
+                        if (Materials.Count >= ResourceCount)
+                        {
+                            break;
+                        }
+                    }
                 }
+
 
                 string state = MachineProgressHelper.GetMachineState(item);
 
                 if (state.Equals(MachineProgressHelper.STATE_READY))
                 {
-                    if (fabric == null) return;
+                    if (Materials == null || Materials.Count != ResourceCount) return;
 
                     PowerHelper.DrawPowerSource(batterySlot.childItem, energyUsage);
 
                     item.ModifyTag(MachineProgressHelper.MACHINE_STATE_TAG, s => s.Enable().SetString(MachineProgressHelper.STATE_WORKING));
                     item.ModifyTag(MachineProgressHelper.MACHINE_PROGRESS_CURRENT_TAG, s => s.Enable().SetInt(0));
-                    item.ModifyTag(MachineProgressHelper.MACHINE_PROGRESS_TARGET_TAG, s => s.Enable().SetInt(TARGET_PROGRESS));
+                    item.ModifyTag(MachineProgressHelper.MACHINE_PROGRESS_TARGET_TAG, s => s.Enable().SetInt(TargetProgress));
+                    item.SetSpriteAndShape("Items/items_tool2", "printer_on");
 
                     MachineProgressHelper.ContinueProgressTypeMachine(item);
                     MachineHelper.OnMachineActioned(machine, moduleGrid);
+                    inputGrid.LockInv();
+                    chipSlot.LockInv();
 
                     if (MachineProgressHelper.IsProgressTypeMachineFinished(item))
                     {
-                        FinishSynthesis(item, fabric, outputGrid);
+                        FinishSynthesis(item, Materials, outputGrid, ProductionItem, ProductionCount);
+                        inputGrid.UnlockInv();
+                        chipSlot.UnlockInv();
+                        item.SetSpriteAndShape("Items/items_tool2", "printer_off");
                     }
                 }
                 else if (state.Equals(MachineProgressHelper.STATE_WORKING))
@@ -121,12 +213,15 @@ namespace VaporWares
 
                     if (MachineProgressHelper.IsProgressTypeMachineFinished(item))
                     {
-                        if (fabric == null)
+                        item.SetSpriteAndShape("Items/items_tool2", "printer_off");
+                        inputGrid.UnlockInv();
+                        chipSlot.UnlockInv();
+                        if (Materials == null || Materials.Count != ResourceCount)
                         {
                             MachineProgressHelper.FinishProgressTypeMachine(item);
                             return;
                         }
-                        FinishSynthesis(item, fabric, outputGrid);
+                        FinishSynthesis(item, Materials, outputGrid, ProductionItem, ProductionCount);
                     }
                 }
             };
@@ -134,53 +229,55 @@ namespace VaporWares
             return machine;
         }
 
-        public static void FinishSynthesis(GameItem machine, List<GameItem> fabric, GameGridInventory outputGrid)
+        public static void FinishSynthesis(GameItem machine, List<GameItem> materials, GameGridInventory outputGrid, string ProductionItem, int ProductionCount)
         {
             MachineProgressHelper.FinishProgressTypeMachine(machine);
-            if (fabric[0].identifier.Equals("kotton_bolt"))
+            foreach(var mat in materials)
             {
-                fabric[0].Destroy();
-                GraphUtils.TryAcceptAll(outputGrid, DirectoryMaster.Item("tshirt"), 2);
+                mat.Destroy();
             }
-            else if (fabric[0].identifier.Equals("kotton_fabric"))
+            for (int i = 0; i < ProductionCount; i++)
             {
-                fabric[0].Destroy();
-                GraphUtils.TryAcceptAll(outputGrid, DirectoryMaster.Item("sleeveless_shirt"), 2);
+                GraphUtils.TryAcceptAll(outputGrid, DirectoryMaster.Item(ProductionItem));
             }
         }
 
-        public static (PixelWindow, GameSlotInventory, GameGridInventory, GameGridInventory, GameGridInventory, GameSlotInventory) CreateMachineInventoryWindow(bool isDraggable = true, bool isCentered = true, int minWidth = 5)
+        public static (PixelWindow, GameSlotInventory, GameGridInventory, GameGridInventory, GameSlotInventory, GameGridInventory, GameSlotInventory) CreateMachineInventoryWindow(bool isDraggable = true, bool isCentered = true, int minWidth = 5)
         {
             PixelWindow window = new PixelWindow(isDraggable, "Auto Tailor", WindowStyle.Machinery);
-            GridPixelElement mainGrid = new GridPixelElement(5, 2, isCentered);
+            GridPixelElement mainGrid = new GridPixelElement(6, 2, isCentered);
 
             GameSlotInventory batterySlot = new GameSlotInventory();
             GameGridInventory moduleGrid = new GameGridInventory(MachineHelper.DEFAULT_MODULE_BAY_CONFIG, MachineHelper.DEFAULT_MODULE_BAY_WIDTH);
             GameGridInventory inputGrid = new GameGridInventory(3, 4);
+            GameSlotInventory chipSlot = new GameSlotInventory();
             GameGridInventory outputGrid = new GameGridInventory(4, 4);
             GameSlotInventory noteSlot = new GameSlotInventory();
 
             TagElement batteryLabel = new TagElement().SetText("Battery");
             TagElement moduleLabel = new TagElement().SetText("Modules");
             TagElement inputLabel = new TagElement().SetText("Fabric");
+            TagElement chipLabel = new TagElement().SetText("Chip");
             TagElement outputLabel = new TagElement().SetText("Output");
             TagElement noteLabel = new TagElement().SetText("Note");
 
             mainGrid.Attach(batteryLabel, 0, 0, minimumHeight: 20, minimumWidth: 20);
             mainGrid.Attach(moduleLabel, 1, 0, minimumHeight: 20, minimumWidth: 20);
             mainGrid.Attach(inputLabel, 2, 0, minimumHeight: 20, minimumWidth: minWidth);
-            mainGrid.Attach(outputLabel, 3, 0, minimumHeight: 20, minimumWidth: 5);
-            mainGrid.Attach(noteLabel, 4, 0, minimumHeight: 5, minimumWidth: 5);
+            mainGrid.Attach(chipLabel, 3, 0, minimumHeight: 20, minimumWidth: minWidth);
+            mainGrid.Attach(outputLabel, 4, 0, minimumHeight: 20, minimumWidth: 5);
+            mainGrid.Attach(noteLabel, 5, 0, minimumHeight: 5, minimumWidth: 5);
 
             mainGrid.Attach(batterySlot, 0, 1, minimumHeight: 50, minimumWidth: 20);
             mainGrid.Attach(moduleGrid, 1, 1, minimumHeight: 50, minimumWidth: 20);
-            mainGrid.Attach(inputGrid, 2, 1, minimumHeight: 50, minimumWidth: minWidth);
-            mainGrid.Attach(outputGrid, 3, 1, minimumHeight: 100, minimumWidth: 5);
-            mainGrid.Attach(noteSlot, 4, 1, minimumHeight: 5, minimumWidth: 5);
+            mainGrid.Attach(inputGrid, 2, 1, minimumHeight: 50, minimumWidth: 100);
+            mainGrid.Attach(chipSlot, 3, 1, minimumHeight: 50, minimumWidth: 20);
+            mainGrid.Attach(outputGrid, 4, 1, minimumHeight: 100, minimumWidth: 100);
+            mainGrid.Attach(noteSlot, 5, 1, minimumHeight: 5, minimumWidth: 5);
 
             window.Attach(mainGrid);
 
-            return (window, batterySlot, moduleGrid, inputGrid, outputGrid, noteSlot);
+            return (window, batterySlot, moduleGrid, inputGrid, chipSlot, outputGrid, noteSlot);
         }
 
         public static GameItem CreateNote()

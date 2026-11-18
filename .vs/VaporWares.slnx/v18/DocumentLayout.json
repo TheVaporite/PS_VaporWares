@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Probably Stolen\\Modding\\VaporWares\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{5B0F3642-DCB6-7F73-CAF7-38AC1280F1E3}|VaporWares.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\probably stolen\\modding\\vaporwares\\autodyer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B0F3642-DCB6-7F73-CAF7-38AC1280F1E3}|VaporWares.csproj|solutionrelative:autodyer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5B0F3642-DCB6-7F73-CAF7-38AC1280F1E3}|VaporWares.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\probably stolen\\modding\\vaporwares\\autoloom.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5B0F3642-DCB6-7F73-CAF7-38AC1280F1E3}|VaporWares.csproj|solutionrelative:autoloom.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -30,56 +34,76 @@
           "Children": [
             {
               "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
+              "Title": "AutoDyer.cs",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Probably Stolen\\Modding\\VaporWares\\AutoDyer.cs",
+              "RelativeDocumentMoniker": "AutoDyer.cs",
+              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Probably Stolen\\Modding\\VaporWares\\AutoDyer.cs",
+              "RelativeToolTip": "AutoDyer.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAkwBoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-18T21:15:53.624Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "Items.cs",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Probably Stolen\\Modding\\VaporWares\\Items.cs",
               "RelativeDocumentMoniker": "Items.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Probably Stolen\\Modding\\VaporWares\\Items.cs",
               "RelativeToolTip": "Items.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAQwBsAAABCAAAAAAAAAA==",
+              "ViewState": "AgIAAJIAAAAAAAAAAAAYwJ4AAAB+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-17T00:12:34.605Z"
+              "WhenOpened": "2026-11-17T00:12:34.605Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "AutoLoom.cs",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Probably Stolen\\Modding\\VaporWares\\AutoLoom.cs",
               "RelativeDocumentMoniker": "AutoLoom.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Probably Stolen\\Modding\\VaporWares\\AutoLoom.cs",
               "RelativeToolTip": "AutoLoom.cs",
-              "ViewState": "AgIAAIcAAAAAAAAAAAAowJQAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAOEAAAAAAAAAAADwv+cAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-11-16T23:50:38.802Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "AutoTailor.cs",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Probably Stolen\\Modding\\VaporWares\\AutoTailor.cs",
               "RelativeDocumentMoniker": "AutoTailor.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Probably Stolen\\Modding\\VaporWares\\AutoTailor.cs",
               "RelativeToolTip": "AutoTailor.cs",
-              "ViewState": "AgIAAGoAAAAAAAAAAAAAAI0AAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAAFQAAAAAAAAAAAAYwF8AAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-16T23:50:51.735Z"
+              "WhenOpened": "2026-11-16T23:50:51.735Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "ModEntry.cs",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Probably Stolen\\Modding\\VaporWares\\ModEntry.cs",
               "RelativeDocumentMoniker": "ModEntry.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Probably Stolen\\Modding\\VaporWares\\ModEntry.cs",
               "RelativeToolTip": "ModEntry.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAACMAAABKAAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAowCIAAABOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-16T23:47:12.29Z"
+              "WhenOpened": "2026-11-16T23:47:12.29Z",
+              "EditorCaption": ""
             }
           ]
         }
