@@ -27,11 +27,9 @@ namespace VaporWares
 
             //noteSlot.mayInventoryAddItemFunc = (item, _) => item.identifier.Equals("postit");
             noteSlot.SetBackgroundFadeSprite("Items/items_tool", "postit");
-            noteSlot.TryAcceptAll(CreateNote());
-            noteSlot.LockInv();
 
             chipSlot.mayInventoryAddItemFunc = (GameItem item, GameInventory _) => GeneralHelper.IsItemOwned(item) && item.identifier.Contains("vaporwares_chip_");
-            chipSlot.SetBackgroundFadeSprite("vapor_wares", "tailor_chip_basic");
+            //chipSlot.SetBackgroundFadeSprite("Items/", "tailor_chip_basic");
 
             GameItem machine = ItemDirectory.CreateEmptyItem()
                 .SetContentWindow(itemWindow)
@@ -88,6 +86,7 @@ namespace VaporWares
                 if (MachineHelper.CanPower(item, batterySlot) == false) return;
 
                 var Slotted = chipSlot.childItem.identifier;
+                if (Slotted == null) return;
                 string ResourceConsumed;
                 int ResourceCount;
                 string ProductionItem;
@@ -118,9 +117,9 @@ namespace VaporWares
                     case "vaporwares_chip_sleeveless":
                         {
                             ResourceConsumed = "kotton_fabric";
-                            ResourceCount = 3;
+                            ResourceCount = 1;
                             ProductionItem = "vaporwares_clothing_sleeveless_shirt";
-                            ProductionCount = 5;
+                            ProductionCount = 2;
                             TargetProgress = 35;
                             break;
                         }
@@ -193,12 +192,14 @@ namespace VaporWares
 
                     MachineProgressHelper.ContinueProgressTypeMachine(item);
                     MachineHelper.OnMachineActioned(machine, moduleGrid);
+                    moduleGrid.LockInv();
                     inputGrid.LockInv();
                     chipSlot.LockInv();
 
                     if (MachineProgressHelper.IsProgressTypeMachineFinished(item))
                     {
                         FinishSynthesis(item, Materials, outputGrid, ProductionItem, ProductionCount);
+                        moduleGrid.UnlockInv();
                         inputGrid.UnlockInv();
                         chipSlot.UnlockInv();
                         item.SetSpriteAndShape("Items/items_tool2", "printer_off");
@@ -214,6 +215,7 @@ namespace VaporWares
                     if (MachineProgressHelper.IsProgressTypeMachineFinished(item))
                     {
                         item.SetSpriteAndShape("Items/items_tool2", "printer_off");
+                        moduleGrid.UnlockInv();
                         inputGrid.UnlockInv();
                         chipSlot.UnlockInv();
                         if (Materials == null || Materials.Count != ResourceCount)
@@ -251,7 +253,7 @@ namespace VaporWares
             GameGridInventory moduleGrid = new GameGridInventory(MachineHelper.DEFAULT_MODULE_BAY_CONFIG, MachineHelper.DEFAULT_MODULE_BAY_WIDTH);
             GameGridInventory inputGrid = new GameGridInventory(3, 4);
             GameSlotInventory chipSlot = new GameSlotInventory();
-            GameGridInventory outputGrid = new GameGridInventory(4, 4);
+            GameGridInventory outputGrid = new GameGridInventory(4, 5);
             GameSlotInventory noteSlot = new GameSlotInventory();
 
             TagElement batteryLabel = new TagElement().SetText("Battery");
@@ -269,8 +271,8 @@ namespace VaporWares
             mainGrid.Attach(noteLabel, 5, 0, minimumHeight: 5, minimumWidth: 5);
 
             mainGrid.Attach(batterySlot, 0, 1, minimumHeight: 50, minimumWidth: 20);
-            mainGrid.Attach(moduleGrid, 1, 1, minimumHeight: 50, minimumWidth: 20);
-            mainGrid.Attach(inputGrid, 2, 1, minimumHeight: 50, minimumWidth: 100);
+            mainGrid.Attach(moduleGrid, 1, 1, minimumHeight: 50, minimumWidth: 116);
+            mainGrid.Attach(inputGrid, 2, 1, minimumHeight: 50, minimumWidth: 50);
             mainGrid.Attach(chipSlot, 3, 1, minimumHeight: 50, minimumWidth: 20);
             mainGrid.Attach(outputGrid, 4, 1, minimumHeight: 100, minimumWidth: 100);
             mainGrid.Attach(noteSlot, 5, 1, minimumHeight: 5, minimumWidth: 5);

@@ -20,12 +20,11 @@ namespace VaporWares
                 return item.IsGameItemType(TypeHelper.MATERIAL);
             };
 
-            outputGrid.mayInventoryAddItemFunc = (item, _) => item.identifier.Equals("kotton_fabric") || item.identifier.Equals("zilk_fabric");
+            outputGrid.mayInventoryAddItemFunc = (item, _) => item.identifier.Equals("kotton_fabric") || item.identifier.Equals("vaporwares_zilk_fabric")
+                                                            || item.identifier.Equals("vaporwares_kotton_bolt") || item.identifier.Equals("vaporwares_zilk_bolt");
 
             //noteSlot.mayInventoryAddItemFunc = (item, _) => item.identifier.Equals("postit");
             noteSlot.SetBackgroundFadeSprite("Items/items_tool", "postit");
-            noteSlot.TryAcceptAll(CreateNote());
-            noteSlot.LockInv();
 
 
             GameItem machine = ItemDirectory.CreateEmptyItem()
@@ -93,7 +92,7 @@ namespace VaporWares
                 int ProductionCount = 4;
                 int TargetProgress = 40;
                 //Determine which process to work, go most valuable first.
-                if(inputGrid.childItems.FindAll(x => x.identifier.Contains("vaporwares_zilk_fabric")).Count >= 2)
+                if(inputGrid.childItems.FindAll(x => x.identifier.Contains("vaporwares_zilk_fabric")).Count >= 3)
                 {
                     ResourceConsumed = "vaporwares_zilk_fabric";
                     ResourceCount = 3;
@@ -109,7 +108,7 @@ namespace VaporWares
                     ProductionCount = 2;
                     TargetProgress = 60;
                 }
-                else if (inputGrid.childItems.FindAll(x => x.identifier.Contains("kotton_fabric")).Count >= 2)
+                else if (inputGrid.childItems.FindAll(x => x.identifier.Contains("kotton_fabric")).Count >= 3)
                 {
                     ResourceConsumed = "kotton_fabric";
                     ResourceCount = 3;
@@ -216,7 +215,7 @@ namespace VaporWares
             mainGrid.Attach(noteLabel, 4, 0, minimumHeight: 5, minimumWidth: 5);
 
             mainGrid.Attach(batterySlot, 0, 1, minimumHeight: 50, minimumWidth: 20);
-            mainGrid.Attach(moduleGrid, 1, 1, minimumHeight: 50, minimumWidth: 20);
+            mainGrid.Attach(moduleGrid, 1, 1, minimumHeight: 50, minimumWidth: 116);
             mainGrid.Attach(inputGrid, 2, 1, minimumHeight: 50, minimumWidth: 100);
             mainGrid.Attach(outputGrid, 3, 1, minimumHeight: 100, minimumWidth: 100);
             mainGrid.Attach(noteSlot, 4, 1, minimumHeight: 5, minimumWidth: 5);

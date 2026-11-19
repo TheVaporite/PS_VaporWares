@@ -77,6 +77,35 @@ namespace VaporWares
 
             return item;
         }
+        public static GameItem CreateTShirtDyed()
+        {
+            GameItem item = ItemDirectory.CreateEmptyItem()
+                .SetName("T-Shirt (Dyed)")
+                .SetSpriteAndShapeFromMod("vapor_wares", "tshirt_cyan"); //use SetSpriteAndShapeFromMod for sprite from mod. The first parameter is the mod's unique ID, and the second is the name of the sprite in the mod's assets folder (without file extension)
+            item.unitValue = 60; //Use unitValue for base price
+            item.shortDescription = "A dyed kotton T-shirt.";
+            item.flavorText = "Made from kotton, this is arguabably the most basic form of clothing on the station.";
+
+            item.SetGameItemType(TypeHelper.HOUSEHOLD_GOOD);
+            item.SetGameItemType("CLOTHING"); // set the item's GameItem Type which is used for buyer/seller and storage
+
+            return item;
+        }
+
+        public static GameItem CreateTShirtDesignSkull()
+        {
+            GameItem item = ItemDirectory.CreateEmptyItem()
+                .SetName("T-Shirt (Skull)")
+                .SetSpriteAndShapeFromMod("vapor_wares", "tshirt_gray_skull"); //use SetSpriteAndShapeFromMod for sprite from mod. The first parameter is the mod's unique ID, and the second is the name of the sprite in the mod's assets folder (without file extension)
+            item.unitValue = 75; //Use unitValue for base price
+            item.shortDescription = "A kotton T-shirt with a skull on it.";
+            item.flavorText = "Skulls, they just work for some people.";
+
+            item.SetGameItemType(TypeHelper.HOUSEHOLD_GOOD);
+            item.SetGameItemType("CLOTHING"); // set the item's GameItem Type which is used for buyer/seller and storage
+
+            return item;
+        }
         public static GameItem CreateSleevelessShirt()
         {
             GameItem item = ItemDirectory.CreateEmptyItem()
@@ -85,6 +114,34 @@ namespace VaporWares
             item.unitValue = 45; //Use unitValue for base price
             item.shortDescription = "A basic kotton Shirt without sleeves.";
             item.flavorText = "Made from kotton, this sleeveless shirt works best as an undershirt.";
+
+            item.SetGameItemType(TypeHelper.HOUSEHOLD_GOOD);
+            item.SetGameItemType("CLOTHING"); // set the item's GameItem Type which is used for buyer/seller and storage
+
+            return item;
+        }
+        public static GameItem CreateSleevelessShirtDyed()
+        {
+            GameItem item = ItemDirectory.CreateEmptyItem()
+                .SetName("Sleeveless Shirt (Dyed)")
+                .SetSpriteAndShapeFromMod("vapor_wares", "sleeveless_shirt_cyan"); //use SetSpriteAndShapeFromMod for sprite from mod. The first parameter is the mod's unique ID, and the second is the name of the sprite in the mod's assets folder (without file extension)
+            item.unitValue = 45; //Use unitValue for base price
+            item.shortDescription = "A dyed kotton Shirt without sleeves.";
+            item.flavorText = "Made from kotton, this sleeveless shirt works best as an undershirt.";
+
+            item.SetGameItemType(TypeHelper.HOUSEHOLD_GOOD);
+            item.SetGameItemType("CLOTHING"); // set the item's GameItem Type which is used for buyer/seller and storage
+
+            return item;
+        }
+        public static GameItem CreateSleevelessShirtDesignSkull()
+        {
+            GameItem item = ItemDirectory.CreateEmptyItem()
+                .SetName("Sleeveless Shirt (Skull)")
+                .SetSpriteAndShapeFromMod("vapor_wares", "sleeveless_gray_skull"); //use SetSpriteAndShapeFromMod for sprite from mod. The first parameter is the mod's unique ID, and the second is the name of the sprite in the mod's assets folder (without file extension)
+            item.unitValue = 70; //Use unitValue for base price
+            item.shortDescription = "A basic kotton Shirt without sleeves. with a skull on it.";
+            item.flavorText = "Skulls, they just work for some people.";
 
             item.SetGameItemType(TypeHelper.HOUSEHOLD_GOOD);
             item.SetGameItemType("CLOTHING"); // set the item's GameItem Type which is used for buyer/seller and storage
@@ -211,6 +268,151 @@ namespace VaporWares
             item.flavorText = "Produces two(2) Zilk scarves for one(1) Zilk Fabric..";
 
             item.SetGameItemType(TypeHelper.PRINTER_MODULE);
+
+            return item;
+        }
+
+        public static GameItem CreateDesignChipSkull()
+        {
+            GameItem item = ItemDirectory.CreateEmptyItem()
+                .SetName("Design Chip (Skull)")
+                .SetSpriteAndShapeFromMod("vapor_wares", "tailor_chip_design"); //use SetSpriteAndShapeFromMod for sprite from mod. The first parameter is the mod's unique ID, and the second is the name of the sprite in the mod's assets folder (without file extension)
+            item.unitValue = 90; //Use unitValue for base price
+            item.shortDescription = "A design chip of a skull pattern.";
+            item.flavorText = "Requires:\nCyan: 0\nMagenta: 0\nYellow: 0\nBlack: 40\nProgress:\n20.";
+
+            item.SetGameItemType(TypeHelper.PRINTER_MODULE);
+
+            return item;
+        }
+
+
+        public static GameItem CreateDyeCyan()
+        {
+            GameItem item = ItemDirectory.CreateEmptyItem()
+                .SetName("Dye (Cyan)")
+                .SetSpriteAndShapeFromMod("vapor_wares", "dye_cyan"); //use SetSpriteAndShapeFromMod for sprite from mod. The first parameter is the mod's unique ID, and the second is the name of the sprite in the mod's assets folder (without file extension)
+            item.unitValue = 60; //Use unitValue for base price
+            item.shortDescription = "A bottle of cyan dye.";
+            item.flavorText = "Used to dye clothing, or used in an AutoDesign to print designs on clothing.";
+
+            item.onItemTargetItemFunc = (itemA, itemB) =>
+            {
+                //Apply dye to clothing?
+                switch(itemB.identifier)
+                {
+                    case "vaporwares_clothing_tshirt":
+                        {
+                            itemB.Destroy();
+                            itemB.parentInventory.TryAcceptAll(ModHelper.SpawnItem("vaporwares_clothing_tshirt_dyed"));
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                };
+            };
+            item.onItemTargetThisFunc = (itemA, itemB) =>
+            {
+                //Apply dye to clothing?
+                switch (itemB.identifier)
+                {
+                    case "vaporwares_clothing_tshirt":
+                        {
+                            itemB.Destroy();
+                            itemB.parentInventory.TryAcceptAll(ModHelper.SpawnItem("vaporwares_clothing_tshirt_dyed"));
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
+                ;
+            };
+            item.canActivateSlotItemFunc = (_, _, _) =>
+            {
+                return true;
+            };
+
+            item.canUseOutsideCombat = true;
+            item.canItemTargetThisFunc = (itemA, itemB) =>
+            {
+                if (itemB.identifier.Contains("vaporwares_clothing_"))
+                {
+                    return true;
+                }
+                return true;
+            };
+
+            item.canItemTargetItemFunc = (itemA, itemB) =>
+            {
+                if (itemB.identifier.Contains("vaporwares_clothing_"))
+                {
+                    return true;
+                }
+                return true;
+            };
+
+            return item;
+        }
+        public static GameItem CreateDyeMagenta()
+        {
+            GameItem item = ItemDirectory.CreateEmptyItem()
+                .SetName("Dye (Magenta)")
+                .SetSpriteAndShapeFromMod("vapor_wares", "dye_magenta"); //use SetSpriteAndShapeFromMod for sprite from mod. The first parameter is the mod's unique ID, and the second is the name of the sprite in the mod's assets folder (without file extension)
+            item.unitValue = 60; //Use unitValue for base price
+            item.shortDescription = "A bottle of magenta dye.";
+            item.flavorText = "Used to dye clothing, or used in an AutoDesign to print designs on clothing.";
+
+            item.onItemTargetItemFunc = (itemA, itemB) =>
+            {
+                //Apply dye to clothing?
+            };
+
+            return item;
+        }
+        public static GameItem CreateDyeYellow()
+        {
+            GameItem item = ItemDirectory.CreateEmptyItem()
+                .SetName("Dye (Yellow)")
+                .SetSpriteAndShapeFromMod("vapor_wares", "dye_yellow"); //use SetSpriteAndShapeFromMod for sprite from mod. The first parameter is the mod's unique ID, and the second is the name of the sprite in the mod's assets folder (without file extension)
+            item.unitValue = 60; //Use unitValue for base price
+            item.shortDescription = "A bottle of yellow dye.";
+            item.flavorText = "Used to dye clothing, or used in an AutoDesign to print designs on clothing.";
+
+            item.onItemTargetItemFunc = (itemA, itemB) =>
+            {
+                //Apply dye to clothing?
+            };
+
+            return item;
+        }
+        public static GameItem CreateDyeBlack()
+        {
+            GameItem item = ItemDirectory.CreateEmptyItem()
+                .SetName("Dye (Black)")
+                .SetSpriteAndShapeFromMod("vapor_wares", "dye_black"); //use SetSpriteAndShapeFromMod for sprite from mod. The first parameter is the mod's unique ID, and the second is the name of the sprite in the mod's assets folder (without file extension)
+            item.unitValue = 60; //Use unitValue for base price
+            item.shortDescription = "A bottle of black dye.";
+            item.flavorText = "Used to dye clothing, or used in an AutoDesign to print designs on clothing.";
+
+            item.onItemTargetItemFunc = (itemA, itemB) =>
+            {
+                //Apply dye to clothing?
+            };
+
+            return item;
+        }
+        public static GameItem CreateDyeCartridge()
+        {
+            GameItem item = ItemDirectory.CreateEmptyItem()
+                .SetName("Dye Cartridge")
+                .SetSpriteAndShapeFromMod("vapor_wares", "dye_cartridge"); //use SetSpriteAndShapeFromMod for sprite from mod. The first parameter is the mod's unique ID, and the second is the name of the sprite in the mod's assets folder (without file extension)
+            item.unitValue = 200; //Use unitValue for base price
+            item.shortDescription = "A cartridge of dyes.";
+            item.flavorText = "Used in an AutoDesign to print designs on clothing.";
 
             return item;
         }
